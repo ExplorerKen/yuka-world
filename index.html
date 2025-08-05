@@ -31,25 +31,39 @@
     }
 
     nav {
-      width: 200px;
-      background-color: #fff3cd;
-      padding: 20px;
-      height: 100vh;
-      box-sizing: border-box;
-      position: fixed;
-      top: 0;
-      left: 0;
-    }
+  width: 200px;
+  background-color: #fff3cd;
+  padding: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
 
-    nav ul {
-      list-style: none;
-      padding: 0;
-    }
+nav ul {
+  list-style: none;
+  padding: 0;
+}
 
-    nav li {
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
+nav li {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+}
+
+.content {
+  margin-left: 200px;
+}
+
+html {
+  scroll-behavior: smooth; 
+}
+
 
     header {
       width: 100%;
@@ -129,18 +143,18 @@
 <body>
   <nav>
     <ul>
-      <li>📖 履歴</li>
-      <li>📅 日程</li>
+      <li>🐕 <a href="#profile">プロフィール</a></li>
+      <li>🗓️ <a href="#schedule">日程</a></li>
     </ul>
   </nav>
 
-  <div style="width: 100%;">
-    <header>
-      <img src="shibainu-smile.png" alt="柴犬イラスト　class="shibainu-illust"">
-      ようこそ ユカちゃんの世界へ
-    </header>
+  <header>
+    <img src="shibainu-smile.png" alt="柴犬イラスト" >
+    ようこそ ユカちゃんの世界へ
+  </header>
 
-    <main>
+  <main>
+    <section id="schedule">
       <div class="photo-section">
         <h2>2025年09月</h2>
         <div class="photos">
@@ -152,12 +166,12 @@
       <div class="photo-section">
         <h2>2025年08月</h2>
         <div class="photos">
-          <div><img src="resized_IMG_1413.jpg" alt="ウインクユカちゃん"></div>
+          <div><img src="resized_IMG_1413.jpg" alt="ウィンクユカちゃん"></div>
           <div><img src="resized_IMG_0361.jpg" alt="後ろ姿ユカちゃん"></div>
           <div><img src="resized_IMG_0369.JPG" alt="ピンクスカーフユカちゃん"></div>
         </div>
       </div>
-    </main>
-  </div>
+    </section>
+  </main>
 </body>
 </html>
