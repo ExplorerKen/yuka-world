@@ -1,0 +1,22 @@
+.profile-section {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.profile-photo img {
+  width: 200px;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+}
+
+.profile-info ul {
+  list-style: none;
+  padding-left: 0;
+  font-size: 1.1em;
+}
+
+.profile-info ul li {
+  margin-bottom: 10px;
+}
