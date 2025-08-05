@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ユカちゃんのプロフィール</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="profile.html">🐕プロフィール</a></li>
+      <li><a href="index.html">📅日程</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>ユカちゃんのプロフィール</h2>
+    <section class="profile-section">
+      <div class="profile-photo">
+        <img src="yuka-profile.png" alt="ユカちゃんのプロフィール写真">
+      </div>
+      <div class="profile-info">
+        <ul>
+          <li>🍖 ささみが大好物！</li>
+          <li>🐷 毎日お気に入りの豚おもちゃで遊んでます</li>
+          <li>💤 どこでもすぐ横寝します</li>
+          <li>😼 実は猫はちょっと苦手…</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
