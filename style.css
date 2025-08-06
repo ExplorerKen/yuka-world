@@ -42,3 +42,22 @@ nav ul li a {
   font-weight: bold;
   font-size: 1.1em;
 }
+
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background-color: #fff8f0;
+}
+
+#japan-map {
+  width: 70%;
+  max-width: 600px;
+  margin-top: 30px;
+  cursor: pointer;
+}
+
+.region-img {
+  display: none;
+  max-width: 90%;
+  margin-top: 20px;
+}
