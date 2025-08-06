@@ -61,3 +61,26 @@ body {
   max-width: 90%;
   margin-top: 20px;
 }
+
+.travel-photo-section {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.travel-photo-section h2 {
+  font-size: 1.5em;
+  color: #d15757;
+  margin-bottom: 10px;
+}
+
+.travel-photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.travel-photo-grid img {
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
