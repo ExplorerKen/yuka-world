@@ -19,13 +19,13 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      gap: 20px;
+      gap: 60px;
       margin-top: 30px;
     }
     
     .left-photos {
-      width: 200px;
-      height: 400px;
+      width: 280px;
+      height: 500px;
       position: relative;
     }
     
@@ -35,13 +35,13 @@
     }
     
     .right-photos {
-      width: 200px;
-      height: 400px;
+      width: 280px;
+      height: 500px;
       position: relative;
     }
     
     #japan-map {
-      width: 400px;
+      width: 500px;
       border: 3px solid #ddd;
       border-radius: 10px;
     }
@@ -75,10 +75,10 @@
       border-style: solid;
     }
     
-    /* 各地域の正確な配置 */
+    /* 各地域の正確な配置（大きな地図に合わせて調整） */
     .hokkaido {
       top: 15%;
-      right: -80px;
+      right: -100px;
     }
     .hokkaido::after {
       border-width: 6px 10px 6px 0;
@@ -90,7 +90,7 @@
     
     .tokyo {
       top: 55%;
-      right: -70px;
+      right: -90px;
     }
     .tokyo::after {
       border-width: 6px 10px 6px 0;
@@ -102,7 +102,7 @@
     
     .kyoto {
       top: 50%;
-      left: -80px;
+      left: -100px;
     }
     .kyoto::after {
       border-width: 6px 0 6px 10px;
@@ -114,7 +114,7 @@
     
     .osaka {
       top: 65%;
-      left: -70px;
+      left: -90px;
     }
     .osaka::after {
       border-width: 6px 0 6px 10px;
@@ -126,7 +126,7 @@
     
     .fukuoka {
       top: 85%;
-      left: -80px;
+      left: -100px;
     }
     .fukuoka::after {
       border-width: 6px 0 6px 10px;
@@ -138,7 +138,7 @@
     
     .fujisan {
       bottom: 30%;
-      right: -80px;
+      right: -100px;
     }
     .fujisan::after {
       border-width: 6px 10px 6px 0;
@@ -150,7 +150,7 @@
     
     .okinawa {
       bottom: 10%;
-      left: -70px;
+      left: -90px;
     }
     .okinawa::after {
       border-width: 6px 0 6px 10px;
@@ -172,12 +172,12 @@
     .region-photo {
       position: absolute;
       width: 100%;
-      max-width: 180px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      max-width: 260px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       opacity: 0;
       transform: scale(0.8);
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
     }
     
     .region-photo.show {
@@ -187,14 +187,14 @@
     
     /* 左側写真の位置 */
     .left-photos #photo-Kyoto { top: 0; }
-    .left-photos #photo-Osaka { top: 100px; }
-    .left-photos #photo-Fukuoka { top: 200px; }
-    .left-photos #photo-Okinawa { top: 300px; }
+    .left-photos #photo-Osaka { top: 120px; }
+    .left-photos #photo-Fukuoka { top: 240px; }
+    .left-photos #photo-Okinawa { top: 360px; }
     
     /* 右側写真の位置 */
     .right-photos #photo-Hokkaido { top: 0; }
-    .right-photos #photo-Tokyo { top: 100px; }
-    .right-photos #photo-Fujisan { top: 200px; }
+    .right-photos #photo-Tokyo { top: 120px; }
+    .right-photos #photo-Fujisan { top: 240px; }
     
     @media (max-width: 768px) {
       .travel-container {
@@ -230,10 +230,9 @@
   </nav>
 
   <h1>ユカちゃんと豚ちゃんの日本旅行</h1>
-  <p>地名のラベルにマウスを乗せると、その地域の旅行写真が左右に表示されます！</p>
   
   <div class="instruction">
-    <strong>💡 使い方:</strong> 地図の周りにある地名ラベルにマウスを乗せてみてください！
+    <strong>💡 使い方:</strong> 地図の周りにある地名ラベルをタッチして見てね～
   </div>
   
   <div class="travel-container">
