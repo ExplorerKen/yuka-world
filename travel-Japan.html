@@ -25,9 +25,8 @@
     
     .left-photos {
       width: 200px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      height: 400px;
+      position: relative;
     }
     
     .map-container {
@@ -37,9 +36,8 @@
     
     .right-photos {
       width: 200px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      height: 400px;
+      position: relative;
     }
     
     #japan-map {
@@ -172,6 +170,7 @@
     }
     
     .region-photo {
+      position: absolute;
       width: 100%;
       max-width: 180px;
       border-radius: 8px;
@@ -186,19 +185,16 @@
       transform: scale(1);
     }
     
-    .photo-placeholder {
-      width: 180px;
-      height: 120px;
-      background-color: #f5f5f5;
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-size: 12px;
-      text-align: center;
-    }
+    /* 左側写真の位置 */
+    .left-photos #photo-Kyoto { top: 0; }
+    .left-photos #photo-Osaka { top: 100px; }
+    .left-photos #photo-Fukuoka { top: 200px; }
+    .left-photos #photo-Okinawa { top: 300px; }
+    
+    /* 右側写真の位置 */
+    .right-photos #photo-Hokkaido { top: 0; }
+    .right-photos #photo-Tokyo { top: 100px; }
+    .right-photos #photo-Fujisan { top: 200px; }
     
     @media (max-width: 768px) {
       .travel-container {
@@ -234,24 +230,18 @@
   </nav>
 
   <h1>ユカちゃんと豚ちゃんの日本旅行</h1>
+  <p>地名のラベルにマウスを乗せると、その地域の旅行写真が左右に表示されます！</p>
   
   <div class="instruction">
-    <strong>💡 使い方:</strong> 地図の周りにある地名ラベルにを乗せてみてね～
+    <strong>💡 使い方:</strong> 地図の周りにある地名ラベルにマウスを乗せてみてください！
   </div>
   
   <div class="travel-container">
     <!-- 左側の写真エリア -->
     <div class="left-photos">
-      <div class="photo-placeholder">京都の写真</div>
       <img id="photo-Kyoto" class="region-photo" src="shibatravel-Kyoto.png" alt="京都の旅行写真">
-      
-      <div class="photo-placeholder">大阪の写真</div>
       <img id="photo-Osaka" class="region-photo" src="shibatravel-Osaka.png" alt="大阪の旅行写真">
-      
-      <div class="photo-placeholder">福岡の写真</div>
       <img id="photo-Fukuoka" class="region-photo" src="shibatravel-Fukuoka.png" alt="福岡の旅行写真">
-      
-      <div class="photo-placeholder">沖縄の写真</div>
       <img id="photo-Okinawa" class="region-photo" src="shibatravel-Okinawa.png" alt="沖縄の旅行写真">
     </div>
     
@@ -305,13 +295,8 @@
     
     <!-- 右側の写真エリア -->
     <div class="right-photos">
-      <div class="photo-placeholder">北海道の写真</div>
       <img id="photo-Hokkaido" class="region-photo" src="shibatravel-Hokkaido.png" alt="北海道の旅行写真">
-      
-      <div class="photo-placeholder">東京の写真</div>
       <img id="photo-Tokyo" class="region-photo" src="shibatravel-Tokyo.png" alt="東京の旅行写真">
-      
-      <div class="photo-placeholder">富士山の写真</div>
       <img id="photo-Fujisan" class="region-photo" src="shibatravel-Fujisan.png" alt="富士山の旅行写真">
     </div>
   </div>
