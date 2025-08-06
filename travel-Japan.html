@@ -15,38 +15,61 @@
       margin-bottom: 30px;
     }
     
-    .map-container {
-      position: relative;
-      display: inline-block;
+    .travel-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
       margin-top: 30px;
     }
     
+    .left-photos {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .map-container {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .right-photos {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
     #japan-map {
+      width: 400px;
       border: 3px solid #ddd;
       border-radius: 10px;
     }
     
     .region-label {
       position: absolute;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.95);
       border: 2px solid #4a90e2;
-      border-radius: 15px;
-      padding: 8px 12px;
+      border-radius: 20px;
+      padding: 6px 12px;
       font-weight: bold;
       color: #333;
       cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
     }
     
     .region-label:hover {
       background-color: #4a90e2;
       color: white;
-      transform: scale(1.1);
+      transform: scale(1.05);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     
-    .region-label::before {
+    .region-label::after {
       content: '';
       position: absolute;
       width: 0;
@@ -54,87 +77,87 @@
       border-style: solid;
     }
     
-    /* 各地域の配置とスタイル */
+    /* 各地域の正確な配置 */
     .hokkaido {
-      top: 10%;
-      right: -20%;
+      top: 15%;
+      right: -80px;
     }
-    .hokkaido::before {
-      border-width: 8px 15px 8px 0;
+    .hokkaido::after {
+      border-width: 6px 10px 6px 0;
       border-color: transparent #4a90e2 transparent transparent;
-      left: -15px;
+      left: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .tokyo {
-      top: 50%;
-      right: -18%;
+      top: 55%;
+      right: -70px;
     }
-    .tokyo::before {
-      border-width: 8px 15px 8px 0;
+    .tokyo::after {
+      border-width: 6px 10px 6px 0;
       border-color: transparent #4a90e2 transparent transparent;
-      left: -15px;
+      left: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .kyoto {
-      top: 45%;
-      left: -12%;
+      top: 50%;
+      left: -80px;
     }
-    .kyoto::before {
-      border-width: 8px 0 8px 15px;
+    .kyoto::after {
+      border-width: 6px 0 6px 10px;
       border-color: transparent transparent transparent #4a90e2;
-      right: -15px;
+      right: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .osaka {
-      top: 70%;
-      left: -12%;
+      top: 65%;
+      left: -70px;
     }
-    .osaka::before {
-      border-width: 8px 0 8px 15px;
+    .osaka::after {
+      border-width: 6px 0 6px 10px;
       border-color: transparent transparent transparent #4a90e2;
-      right: -15px;
+      right: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .fukuoka {
-      top: 90%;
-      left: -12%;
+      top: 85%;
+      left: -80px;
     }
-    .fukuoka::before {
-      border-width: 8px 0 8px 15px;
+    .fukuoka::after {
+      border-width: 6px 0 6px 10px;
       border-color: transparent transparent transparent #4a90e2;
-      right: -15px;
+      right: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .fujisan {
-      bottom: 20%;
-      right: -15%;
+      bottom: 30%;
+      right: -80px;
     }
-    .fujisan::before {
-      border-width: 8px 15px 8px 0;
+    .fujisan::after {
+      border-width: 6px 10px 6px 0;
       border-color: transparent #4a90e2 transparent transparent;
-      left: -15px;
+      left: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .okinawa {
-      bottom: 5%;
-      left: -12%;
+      bottom: 10%;
+      left: -70px;
     }
-    .okinawa::before {
-      border-width: 8px 0 8px 15px;
+    .okinawa::after {
+      border-width: 6px 0 6px 10px;
       border-color: transparent transparent transparent #4a90e2;
-      right: -15px;
+      right: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -148,28 +171,56 @@
       max-width: 500px;
     }
     
-    .region-img.show {
-      display: block;
-      animation: fadeIn 0.5s ease;
+    .region-photo {
+      width: 100%;
+      max-width: 180px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s ease;
     }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .region-photo.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    .photo-placeholder {
+      width: 180px;
+      height: 120px;
+      background-color: #f5f5f5;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 12px;
+      text-align: center;
     }
     
     @media (max-width: 768px) {
+      .travel-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .left-photos, .right-photos {
+        width: 100%;
+        max-width: 300px;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
       .region-label {
-        font-size: 0.9em;
-        padding: 6px 10px;
+        font-size: 12px;
+        padding: 4px 8px;
       }
       
-      .hokkaido, .tokyo, .fujisan {
-        right: -25%;
-      }
-      
-      .kyoto, .osaka, .fukuoka, .okinawa {
-        left: -15%;
+      #japan-map {
+        width: 300px;
       }
     }
   </style>
@@ -183,101 +234,128 @@
   </nav>
 
   <h1>ユカちゃんと豚ちゃんの日本旅行</h1>
-  <p>地名のラベルにマウスを乗せると、その地域の旅行写真が表示されます！</p>
+  <p>地名のラベルにマウスを乗せると、その地域の旅行写真が左右に表示されます！</p>
   
   <div class="instruction">
     <strong>💡 使い方:</strong> 地図の周りにある地名ラベルにマウスを乗せてみてください！
   </div>
   
-  <div class="map-container">
-    <img id="japan-map" src="shibatravel-Japan.png" alt="日本地図">
-    
-    <!-- 地域ラベル -->
-    <div class="region-label hokkaido" 
-         onmouseenter="showImage('Hokkaido')" 
-         onmouseleave="hideImage('Hokkaido')">
-      北海道
+  <div class="travel-container">
+    <!-- 左側の写真エリア -->
+    <div class="left-photos">
+      <div class="photo-placeholder">京都の写真</div>
+      <img id="photo-Kyoto" class="region-photo" src="shibatravel-Kyoto.png" alt="京都の旅行写真">
+      
+      <div class="photo-placeholder">大阪の写真</div>
+      <img id="photo-Osaka" class="region-photo" src="shibatravel-Osaka.png" alt="大阪の旅行写真">
+      
+      <div class="photo-placeholder">福岡の写真</div>
+      <img id="photo-Fukuoka" class="region-photo" src="shibatravel-Fukuoka.png" alt="福岡の旅行写真">
+      
+      <div class="photo-placeholder">沖縄の写真</div>
+      <img id="photo-Okinawa" class="region-photo" src="shibatravel-Okinawa.png" alt="沖縄の旅行写真">
     </div>
     
-    <div class="region-label tokyo" 
-         onmouseenter="showImage('Tokyo')" 
-         onmouseleave="hideImage('Tokyo')">
-      東京
+    <!-- 中央の地図 -->
+    <div class="map-container">
+      <img id="japan-map" src="shibatravel-Japan.png" alt="日本地図">
+      
+      <!-- 地域ラベル（正確な位置） -->
+      <div class="region-label hokkaido" 
+           onmouseenter="showPhoto('Hokkaido')" 
+           onmouseleave="hidePhoto('Hokkaido')">
+        北海道
+      </div>
+      
+      <div class="region-label tokyo" 
+           onmouseenter="showPhoto('Tokyo')" 
+           onmouseleave="hidePhoto('Tokyo')">
+        東京
+      </div>
+      
+      <div class="region-label kyoto" 
+           onmouseenter="showPhoto('Kyoto')" 
+           onmouseleave="hidePhoto('Kyoto')">
+        京都
+      </div>
+      
+      <div class="region-label osaka" 
+           onmouseenter="showPhoto('Osaka')" 
+           onmouseleave="hidePhoto('Osaka')">
+        大阪
+      </div>
+      
+      <div class="region-label fukuoka" 
+           onmouseenter="showPhoto('Fukuoka')" 
+           onmouseleave="hidePhoto('Fukuoka')">
+        福岡
+      </div>
+      
+      <div class="region-label fujisan" 
+           onmouseenter="showPhoto('Fujisan')" 
+           onmouseleave="hidePhoto('Fujisan')">
+        富士山
+      </div>
+      
+      <div class="region-label okinawa" 
+           onmouseenter="showPhoto('Okinawa')" 
+           onmouseleave="hidePhoto('Okinawa')">
+        沖縄
+      </div>
     </div>
     
-    <div class="region-label kyoto" 
-         onmouseenter="showImage('Kyoto')" 
-         onmouseleave="hideImage('Kyoto')">
-      京都
-    </div>
-    
-    <div class="region-label osaka" 
-         onmouseenter="showImage('Osaka')" 
-         onmouseleave="hideImage('Osaka')">
-      大阪
-    </div>
-    
-    <div class="region-label fukuoka" 
-         onmouseenter="showImage('Fukuoka')" 
-         onmouseleave="hideImage('Fukuoka')">
-      福岡
-    </div>
-    
-    <div class="region-label fujisan" 
-         onmouseenter="showImage('Fujisan')" 
-         onmouseleave="hideImage('Fujisan')">
-      富士山
-    </div>
-    
-    <div class="region-label okinawa" 
-         onmouseenter="showImage('Okinawa')" 
-         onmouseleave="hideImage('Okinawa')">
-      沖縄
+    <!-- 右側の写真エリア -->
+    <div class="right-photos">
+      <div class="photo-placeholder">北海道の写真</div>
+      <img id="photo-Hokkaido" class="region-photo" src="shibatravel-Hokkaido.png" alt="北海道の旅行写真">
+      
+      <div class="photo-placeholder">東京の写真</div>
+      <img id="photo-Tokyo" class="region-photo" src="shibatravel-Tokyo.png" alt="東京の旅行写真">
+      
+      <div class="photo-placeholder">富士山の写真</div>
+      <img id="photo-Fujisan" class="region-photo" src="shibatravel-Fujisan.png" alt="富士山の旅行写真">
     </div>
   </div>
-  
-  <!-- 地域の写真 -->
-  <img id="img-Hokkaido" class="region-img" src="shibatravel-Hokkaido.png" alt="北海道の旅行写真">
-  <img id="img-Tokyo" class="region-img" src="shibatravel-Tokyo.png" alt="東京の旅行写真">
-  <img id="img-Kyoto" class="region-img" src="shibatravel-Kyoto.png" alt="京都の旅行写真">
-  <img id="img-Osaka" class="region-img" src="shibatravel-Osaka.png" alt="大阪の旅行写真">
-  <img id="img-Fukuoka" class="region-img" src="shibatravel-Fukuoka.png" alt="福岡の旅行写真">
-  <img id="img-Okinawa" class="region-img" src="shibatravel-Okinawa.png" alt="沖縄の旅行写真">
-  <img id="img-Fujisan" class="region-img" src="shibatravel-Fujisan.png" alt="富士山の旅行写真">
 
   <script>
-    function showImage(region) {
-      // すべての画像を非表示
-      const regions = document.querySelectorAll('.region-img');
-      regions.forEach(img => {
-        img.style.display = 'none';
-        img.classList.remove('show');
-      });
-      
-      // 選択された地域の画像を表示
-      const target = document.getElementById(`img-${region}`);
-      if (target) {
-        target.style.display = 'block';
-        setTimeout(() => target.classList.add('show'), 10);
+    function showPhoto(region) {
+      const photo = document.getElementById(`photo-${region}`);
+      if (photo) {
+        photo.classList.add('show');
       }
     }
     
-    function hideImage(region) {
-      const target = document.getElementById(`img-${region}`);
-      if (target) {
-        target.classList.remove('show');
-        setTimeout(() => target.style.display = 'none', 500);
+    function hidePhoto(region) {
+      const photo = document.getElementById(`photo-${region}`);
+      if (photo) {
+        photo.classList.remove('show');
       }
     }
     
-    // ラベルのホバー効果でarrowの色も変更
+    // ホバー効果で矢印の色も変更
     document.querySelectorAll('.region-label').forEach(label => {
       label.addEventListener('mouseenter', function() {
-        this.style.setProperty('--arrow-color', 'white');
+        const region = this.textContent.trim();
+        // 対応する写真を表示
+        if (region === '北海道') showPhoto('Hokkaido');
+        else if (region === '東京') showPhoto('Tokyo');
+        else if (region === '京都') showPhoto('Kyoto');
+        else if (region === '大阪') showPhoto('Osaka');
+        else if (region === '福岡') showPhoto('Fukuoka');
+        else if (region === '富士山') showPhoto('Fujisan');
+        else if (region === '沖縄') showPhoto('Okinawa');
       });
       
       label.addEventListener('mouseleave', function() {
-        this.style.setProperty('--arrow-color', '#4a90e2');
+        const region = this.textContent.trim();
+        // 対応する写真を隠す
+        if (region === '北海道') hidePhoto('Hokkaido');
+        else if (region === '東京') hidePhoto('Tokyo');
+        else if (region === '京都') hidePhoto('Kyoto');
+        else if (region === '大阪') hidePhoto('Osaka');
+        else if (region === '福岡') hidePhoto('Fukuoka');
+        else if (region === '富士山') hidePhoto('Fujisan');
+        else if (region === '沖縄') hidePhoto('Okinawa');
       });
     });
   </script>
