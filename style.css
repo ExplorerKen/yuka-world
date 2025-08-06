@@ -22,21 +22,19 @@
   margin-bottom: 10px;
 }
 
-/* 共通ナビゲーションスタイル - 通常ページ用 */
+/* 共通ナビゲーションスタイル - 通常ページ用（縦並び） */
 nav {
   background-color: #fff2cc;
-  padding: 15px;
+  padding: 10px 20px;
   border-bottom: 2px solid #f6c23e;
-  margin-bottom: 20px;
-  border-radius: 8px;
 }
 
 nav ul {
   list-style: none;
-  padding: 0;
+  padding-left: 0;
   display: flex;
-  justify-content: center;
-  gap: 30px;
+  flex-direction: column;
+  gap: 10px;
   margin: 0;
 }
 
@@ -45,13 +43,6 @@ nav ul li a {
   color: #333;
   font-weight: bold;
   font-size: 1.1em;
-  padding: 8px 16px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-nav ul li a:hover {
-  background-color: #f6c23e;
 }
 
 /* 共通ボディスタイル */
