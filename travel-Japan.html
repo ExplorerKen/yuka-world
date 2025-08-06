@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>犬と豚おもちゃの日本旅行</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #fff8f0;
+    }
+    #japan-map {
+      width: 70%;
+      max-width: 600px;
+      margin-top: 30px;
+      cursor: pointer;
+    }
+    .region-img {
+      display: none;
+      max-width: 90%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>犬と豚おもちゃの日本旅行</h1>
+  <p>日本地図の地域をクリックすると、旅行先の様子が表示されます！</p>
+  <img id="japan-map" src="shibatravel-Japan.png" usemap="#japanmap">
+
+  <map name="japanmap">
+    <area shape="rect" coords="230,60,280,110" alt="北海道" onclick="showImage('Hokkaido')">
+    <area shape="rect" coords="180,170,230,220" alt="東京" onclick="showImage('Tokyo')">
+    <area shape="rect" coords="160,300,210,350" alt="京都" onclick="showImage('Kyoto')">
+    <area shape="rect" coords="140,330,190,380" alt="大阪" onclick="showImage('Osaka')">
+    <area shape="rect" coords="110,400,160,450" alt="福岡" onclick="showImage('Fukuoka')">
+    <area shape="rect" coords="190,430,240,480" alt="沖縄" onclick="showImage('Okinawa')">
+    <area shape="rect" coords="170,240,220,290" alt="富士山" onclick="showImage('Fujisan')">
+  </map>
+
+  <img id="img-Hokkaido" class="region-img" src="shibatravel-Hokkaido.png">
+  <img id="img-Tokyo" class="region-img" src="shibatravel-Tokyo.png">
+  <img id="img-Kyoto" class="region-img" src="shibatravel-Kyoto.png">
+  <img id="img-Osaka" class="region-img" src="shibatravel-osaka.png">
+  <img id="img-Fukuoka" class="region-img" src="shibatravel-Fukuoka.png">
+  <img id="img-Okinawa" class="region-img" src="shibatravel-Okinawa.png">
+  <img id="img-Fujisan" class="region-img" src="shibatravel-Fujisan.png">
+
+  <script>
+    function showImage(region) {
+      const images = document.querySelectorAll('.region-img');
+      images.forEach(img => img.style.display = 'none');
+      document.getElementById('img-' + region).style.display = 'block';
+    }
+  </script>
+</body>
+</html>
