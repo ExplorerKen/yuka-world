@@ -35,12 +35,16 @@
   <img id="img-Okinawa" class="region-img" src="shibatravel-Okinawa.png">
   <img id="img-Fujisan" class="region-img" src="shibatravel-Fujisan.png">
 
-  <script>
-    function showImage(region) {
-      const images = document.querySelectorAll('.region-img');
-      images.forEach(img => img.style.display = 'none');
-      document.getElementById('img-' + region).style.display = 'block';
-    }
-  </script>
 </body>
+  <script>
+  function showImage(region) {
+    const regions = document.querySelectorAll('.region-img');
+    regions.forEach(img => img.style.display = 'none');
+    const target = document.getElementById(`img-${region}`);
+    if (target) {
+      target.style.display = 'block';
+    }
+  }
+</script>
+
 </html>
