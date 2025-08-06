@@ -8,7 +8,7 @@
 <body>
   <nav>
     <ul>
-      <li><a href="home.html">🏠 ホーム</a></li>
+      <li><a href="index.html">🏠 ホーム</a></li>
       <li><a href="index.html">📅 日程</a></li>
     </ul>
   </nav>
@@ -35,16 +35,15 @@
   <img id="img-Okinawa" class="region-img" src="shibatravel-Okinawa.png">
   <img id="img-Fujisan" class="region-img" src="shibatravel-Fujisan.png">
 
-</body>
   <script>
-  function showImage(region) {
-    const regions = document.querySelectorAll('.region-img');
-    regions.forEach(img => img.style.display = 'none');
-    const target = document.getElementById(`img-${region}`);
-    if (target) {
-      target.style.display = 'block';
+    function showImage(region) {
+      const regions = document.querySelectorAll('.region-img');
+      regions.forEach(img => img.style.display = 'none');
+      const target = document.getElementById(`img-${region}`);
+      if (target) {
+        target.style.display = 'block';
+      }
     }
-  }
-</script>
-
+  </script>
+</body>
 </html>
