@@ -231,7 +231,7 @@
   <h1>ユカちゃんと豚ちゃんの日本旅行</h1>
   
   <div class="instruction">
-    <strong>💡 使い方:</strong> 地図の周りにある地名ラベルをタッチして見てね～
+    <strong>💡 使い方:</strong> 地図の周りにある地名ラベルをタッチ（パソコンではマウスオーバー）して見てね～
   </div>
   
   <div class="travel-container">
@@ -314,31 +314,60 @@
       }
     }
     
-    // ホバー効果で矢印の色も変更
+    function hideAllPhotos() {
+      document.querySelectorAll('.region-photo').forEach(photo => {
+        photo.classList.remove('show');
+      });
+    }
+    
+    function getRegionKey(regionText) {
+      const regionMap = {
+        '北海道': 'Hokkaido',
+        '東京': 'Tokyo',
+        '京都': 'Kyoto',
+        '大阪': 'Osaka',
+        '福岡': 'Fukuoka',
+        '富士山': 'Fujisan',
+        '沖縄': 'Okinawa'
+      };
+      return regionMap[regionText];
+    }
+    
+    // モバイル端末かどうかを判定
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    
+    // 各ラベルにイベントリスナーを追加
     document.querySelectorAll('.region-label').forEach(label => {
-      label.addEventListener('mouseenter', function() {
-        const region = this.textContent.trim();
-        // 対応する写真を表示
-        if (region === '北海道') showPhoto('Hokkaido');
-        else if (region === '東京') showPhoto('Tokyo');
-        else if (region === '京都') showPhoto('Kyoto');
-        else if (region === '大阪') showPhoto('Osaka');
-        else if (region === '福岡') showPhoto('Fukuoka');
-        else if (region === '富士山') showPhoto('Fujisan');
-        else if (region === '沖縄') showPhoto('Okinawa');
-      });
+      const region = label.textContent.trim();
+      const regionKey = getRegionKey(region);
       
-      label.addEventListener('mouseleave', function() {
-        const region = this.textContent.trim();
-        // 対応する写真を隠す
-        if (region === '北海道') hidePhoto('Hokkaido');
-        else if (region === '東京') hidePhoto('Tokyo');
-        else if (region === '京都') hidePhoto('Kyoto');
-        else if (region === '大阪') hidePhoto('Osaka');
-        else if (region === '福岡') hidePhoto('Fukuoka');
-        else if (region === '富士山') hidePhoto('Fujisan');
-        else if (region === '沖縄') hidePhoto('Okinawa');
-      });
+      if (isMobile()) {
+        // モバイル端末の場合：タッチイベントを使用
+        label.addEventListener('touchstart', function(e) {
+          e.preventDefault(); // デフォルトの動作を防ぐ
+          hideAllPhotos(); // 他の写真を隠す
+          showPhoto(regionKey);
+        });
+        
+        // タッチ以外の場所をタップしたら写真を隠す
+        document.addEventListener('touchstart', function(e) {
+          if (!e.target.closest('.region-label')) {
+            hideAllPhotos();
+          }
+        });
+        
+      } else {
+        // デスクトップの場合：マウスイベントを使用
+        label.addEventListener('mouseenter', function() {
+          showPhoto(regionKey);
+        });
+        
+        label.addEventListener('mouseleave', function() {
+          hidePhoto(regionKey);
+        });
+      }
     });
   </script>
 </body>
