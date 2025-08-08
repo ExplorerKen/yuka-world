@@ -379,6 +379,10 @@
         // Desktop: hover in/out
         label.addEventListener('mouseenter', () => showPhoto(region));
         label.addEventListener('mouseleave', () => hidePhoto(region));
+        label.addEventListener('click', (e) => {
+          e.preventDefault();
+          showPhoto(region);
+        });
       } else {
         // Touch: tap to open (tapping another label switches photo)
         label.addEventListener('click', (e) => {
