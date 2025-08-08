@@ -229,8 +229,8 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.8);
-        width: 280px;
-        max-width: 280px;
+        width: 300px;
+        max-width: 300px;
         height: auto;
         border-radius: 12px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
@@ -238,6 +238,7 @@
         transition: all 0.4s ease;
         z-index: 100;
         border: 3px solid white;
+        pointer-events: none;
       }
       
       .region-photo.show {
@@ -248,18 +249,20 @@
       .close-photo {
         display: none;
         position: absolute;
-        top: 10%;
-        right: 10%;
-        width: 30px;
-        height: 30px;
+        top: 20px;
+        right: 20px;
+        width: 35px;
+        height: 35px;
         background-color: #ff4444;
         color: white;
         border: none;
         border-radius: 50%;
-        font-size: 18px;
+        font-size: 20px;
+        font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        z-index: 101;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        z-index: 102;
+        line-height: 1;
       }
       
       .close-photo.show {
@@ -359,15 +362,28 @@
 
   <script>
     function showPhoto(region) {
+      console.log('showPhoto関数が呼ばれました:', region); // デバッグ用
+      
       // モバイル端末かどうかをチェック
       if (isMobile()) {
         // モバイル用の写真を表示
         const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
         const closeBtn = document.querySelector('.close-photo');
+        
+        console.log('モバイル写真要素:', mobilePhoto); // デバッグ用
+        
         if (mobilePhoto) {
           hideAllPhotos(); // 他の写真を隠す
-          mobilePhoto.classList.add('show');
-          closeBtn.classList.add('show');
+          
+          // 少し遅延してから表示（アニメーションのため）
+          setTimeout(() => {
+            mobilePhoto.classList.add('show');
+            if (closeBtn) {
+              closeBtn.classList.add('show');
+            }
+          }, 100);
+        } else {
+          console.log('モバイル写真が見つかりません:', `photo-${region}-mobile`);
         }
       } else {
         // デスクトップ用の写真を表示
@@ -431,13 +447,22 @@
       if (isMobile()) {
         // モバイル端末の場合：タッチイベントを使用
         label.addEventListener('touchstart', function(e) {
-          e.preventDefault(); // デフォルトの動作を防ぐ
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('タッチされた地域:', regionKey); // デバッグ用
           showPhoto(regionKey);
         });
         
-        // タッチ以外の場所をタップしたら写真を隠す
+        label.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('クリックされた地域:', regionKey); // デバッグ用
+          showPhoto(regionKey);
+        });
+        
+        // 地図以外の場所をタップしたら写真を隠す
         document.addEventListener('touchstart', function(e) {
-          if (!e.target.closest('.region-label') && !e.target.closest('.region-photo') && !e.target.closest('.close-photo')) {
+          if (!e.target.closest('.map-container')) {
             hideAllPhotos();
           }
         });
