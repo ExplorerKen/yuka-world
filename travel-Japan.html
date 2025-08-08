@@ -300,47 +300,19 @@
       <img id="japan-map" src="shibatravel-Japan.png" alt="日本地図">
       
       <!-- 地域ラベル（正確な位置） -->
-      <div class="region-label hokkaido" 
-           onmouseenter="showPhoto('Hokkaido')" 
-           onmouseleave="hidePhoto('Hokkaido')">
-        北海道
-      </div>
+      <div class="region-label hokkaido" data-region="Hokkaido">北海道</div>
       
-      <div class="region-label tokyo" 
-           onmouseenter="showPhoto('Tokyo')" 
-           onmouseleave="hidePhoto('Tokyo')">
-        東京
-      </div>
+      <div class="region-label tokyo" data-region="Tokyo">東京</div>
+
+      <div class="region-label kyoto" data-region="Kyoto">京都</div>
       
-      <div class="region-label kyoto" 
-           onmouseenter="showPhoto('Kyoto')" 
-           onmouseleave="hidePhoto('Kyoto')">
-        京都
-      </div>
+      <div class="region-label osaka" data-region="Osaka">大阪</div>
       
-      <div class="region-label osaka" 
-           onmouseenter="showPhoto('Osaka')" 
-           onmouseleave="hidePhoto('Osaka')">
-        大阪
-      </div>
+      <div class="region-label fukuoka" data-region="Fukuoka">福岡</div>
       
-      <div class="region-label fukuoka" 
-           onmouseenter="showPhoto('Fukuoka')" 
-           onmouseleave="hidePhoto('Fukuoka')">
-        福岡
-      </div>
+      <div class="region-label fujisan" data-region="Fujisan">富士山</div>
       
-      <div class="region-label fujisan" 
-           onmouseenter="showPhoto('Fujisan')" 
-           onmouseleave="hidePhoto('Fujisan')">
-        富士山
-      </div>
-      
-      <div class="region-label okinawa" 
-           onmouseenter="showPhoto('Okinawa')" 
-           onmouseleave="hidePhoto('Okinawa')">
-        沖縄
-      </div>
+      <div class="region-label okinawa" data-region="Okinawa">沖縄</div>
       
       <!-- モバイル用：中央に表示される写真 -->
       <img id="photo-Kyoto-mobile" class="region-photo" src="shibatravel-Kyoto.png" alt="京都の旅行写真">
@@ -365,16 +337,13 @@
   <script>
     function showPhoto(region) {
       // モバイル判定
+      hideAllPhotos(); //
       if (isMobile()) {
         // モバイル用写真を表示
         const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
-        const closeBtn = document.querySelector('.close-photo');
         if (mobilePhoto) {
-          hideAllPhotos();
           mobilePhoto.classList.add('show');
-          if (closeBtn) {
-            closeBtn.classList.add('show');
-          }
+          document.querySelector('.close-photo').classList.add('show');
         }
       } else {
         // デスクトップ用写真を表示
@@ -415,43 +384,23 @@
 
     function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    || window.innerWidth <= 768;
     }
 
     // モバイル用のタッチイベントを追加
-    document.addEventListener('DOMContentLoaded', function() {
-      if (isMobile()) {
-        document.querySelectorAll('.region-label').forEach(label => {
-          const region = label.textContent.trim();
-          let regionKey = region;
-          
-          if (region === '北海道') regionKey = 'Hokkaido';
-          else if (region === '東京') regionKey = 'Tokyo';
-          else if (region === '京都') regionKey = 'Kyoto';
-          else if (region === '大阪') regionKey = 'Osaka';
-          else if (region === '福岡') regionKey = 'Fukuoka';
-          else if (region === '富士山') regionKey = 'Fujisan';
-          else if (region === '沖縄') regionKey = 'Okinawa';
-          
-          label.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            showPhoto(regionKey);
-          });
-          
-          label.addEventListener('click', function(e) {
-            e.preventDefault();
-            showPhoto(regionKey);
-          });
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+  if (isMobile()) {
+    document.querySelectorAll('.region-label').forEach(label => {
+      const regionKey = label.dataset.region;
 
-        // 地図外をタップした時に写真を隠す
-        document.addEventListener('touchstart', function(e) {
-          if (!e.target.closest('.map-container')) {
-            hideAllPhotos();
-          }
-        });
-      }
+      label.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        showPhoto(regionKey);
+      });
+
+      label.addEventListener('click', function (e) {
+        e.preventDefault();
+        showPhoto(regionKey);
+      });
     });
-  </script>
-</body>
-</html>
+  }
+});
