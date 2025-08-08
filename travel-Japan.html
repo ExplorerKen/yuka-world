@@ -198,7 +198,8 @@
     
     /* パソコンでは×ボタンを完全に隠す */
     .close-photo { display:none; }
-    @media (max-width: 768px) { .close-photo.show { display:block; } }
+    @media (max-width: 768px) { 
+      .close-photo.show { display:block; }
       .travel-container {
         flex-direction: column;
         align-items: center;
@@ -218,9 +219,7 @@
         padding: 3px 6px;
       }
       
-      #japan-map {
-        width: 320px;
-      }
+      #japan-map { width: 320px; }
       
       .region-photo {
         position: absolute;
@@ -264,9 +263,7 @@
         line-height: 1;
       }
       
-      .close-photo.show {
-        display: block !important;
-      }
+      .close-photo.show { display: block !important; } 
     }
   </style>
 </head>
