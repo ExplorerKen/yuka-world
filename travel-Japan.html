@@ -363,123 +363,61 @@
   </div>
 
   <script>
-    function showPhoto(region) {
-      console.log('showPhoto関数が呼ばれました:', region); // デバッグ用
-      
-      // モバイル端末かどうかをチェック
-      if (isMobile()) {
-        // モバイル用の写真を表示
-        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
-        const closeBtn = document.querySelector('.close-photo');
-        
-        console.log('モバイル写真要素:', mobilePhoto); // デバッグ用
-        
-        if (mobilePhoto) {
-          hideAllPhotos(); // 他の写真を隠す
-          
-          // 少し遅延してから表示（アニメーションのため）
-          setTimeout(() => {
-            mobilePhoto.classList.add('show');
-            if (closeBtn) {
-              closeBtn.classList.add('show');
-            }
-          }, 100);
-        } else {
-          console.log('モバイル写真が見つかりません:', `photo-${region}-mobile`);
-        }
-      } else {
-        // デスクトップ用の写真を表示
-        const photo = document.getElementById(`photo-${region}`);
-        if (photo) {
-          photo.classList.add('show');
-        }
-      }
-    }
+function showPhoto(region) {
+  const photo = document.getElementById(`photo-${region}`);
+  if (photo) {
+    photo.classList.add('show');
+  }
+}
+
+function hidePhoto(region) {
+  const photo = document.getElementById(`photo-${region}`);
+  if (photo) {
+    photo.classList.remove('show');
+  }
+}
+
+function hideAllPhotos() {
+  document.querySelectorAll('.region-photo').forEach(photo => {
+    photo.classList.remove('show');
+  });
+}
+
+// モバイル端末かどうかを判定
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// 各ラベルにイベントリスナーを追加
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.region-label').forEach(label => {
+    const region = label.textContent.trim();
+    let regionKey = region;
     
-    function hidePhoto(region) {
-      if (isMobile()) {
-        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
-        const closeBtn = document.querySelector('.close-photo');
-        if (mobilePhoto) {
-          mobilePhoto.classList.remove('show');
-          closeBtn.classList.remove('show');
-        }
-      } else {
-        const photo = document.getElementById(`photo-${region}`);
-        if (photo) {
-          photo.classList.remove('show');
-        }
-      }
-    }
+    // 地域名をマッピング
+    if (region === '北海道') regionKey = 'Hokkaido';
+    else if (region === '東京') regionKey = 'Tokyo';
+    else if (region === '京都') regionKey = 'Kyoto';
+    else if (region === '大阪') regionKey = 'Osaka';
+    else if (region === '福岡') regionKey = 'Fukuoka';
+    else if (region === '富士山') regionKey = 'Fujisan';
+    else if (region === '沖縄') regionKey = 'Okinawa';
     
-    function hideAllPhotos() {
-      // 全ての写真を隠す（デスクトップとモバイル両方）
-      document.querySelectorAll('.region-photo').forEach(photo => {
-        photo.classList.remove('show');
+    // デスクトップでは既存のonmouseenter/onmouseleaveを使用
+    // モバイルではタッチイベントを追加
+    if (isMobile()) {
+      label.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        showPhoto(regionKey);
       });
-      const closeBtn = document.querySelector('.close-photo');
-      if (closeBtn) {
-        closeBtn.classList.remove('show');
-      }
-    }
-    
-    function getRegionKey(regionText) {
-      const regionMap = {
-        '北海道': 'Hokkaido',
-        '東京': 'Tokyo',
-        '京都': 'Kyoto',
-        '大阪': 'Osaka',
-        '福岡': 'Fukuoka',
-        '富士山': 'Fujisan',
-        '沖縄': 'Okinawa'
-      };
-      return regionMap[regionText];
-    }
-    
-    // モバイル端末かどうかを判定
-    function isMobile() {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-    
-    // 各ラベルにイベントリスナーを追加
-    document.querySelectorAll('.region-label').forEach(label => {
-      const region = label.textContent.trim();
-      const regionKey = getRegionKey(region);
       
-      if (isMobile()) {
-        // モバイル端末の場合：タッチイベントを使用
-        label.addEventListener('touchstart', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('タッチされた地域:', regionKey); // デバッグ用
-          showPhoto(regionKey);
-        });
-        
-        label.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('クリックされた地域:', regionKey); // デバッグ用
-          showPhoto(regionKey);
-        });
-        
-        // 地図以外の場所をタップしたら写真を隠す
-        document.addEventListener('touchstart', function(e) {
-          if (!e.target.closest('.map-container')) {
-            hideAllPhotos();
-          }
-        });
-        
-      } else {
-        // デスクトップの場合：マウスイベントを使用
-        label.addEventListener('mouseenter', function() {
-          showPhoto(regionKey);
-        });
-        
-        label.addEventListener('mouseleave', function() {
-          hidePhoto(regionKey);
-        });
-      }
-    });
-  </script>
+      label.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPhoto(regionKey);
+      });
+    }
+  });
+});
+</script>
 </body>
 </html>
