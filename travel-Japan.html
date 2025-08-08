@@ -197,11 +197,8 @@
     .right-photos #photo-Fujisan { top: 250px; left: 10px; }
     
     /* パソコンでは×ボタンを完全に隠す */
-    .close-photo {
-      display: none !important;
-    }
-    
-    @media (max-width: 768px) {
+    .close-photo { display:none; }
+    @media (max-width: 768px) { .close-photo.show { display:block; } }
       .travel-container {
         flex-direction: column;
         align-items: center;
@@ -335,72 +332,67 @@
   </div>
 
   <script>
-    function showPhoto(region) {
-      // モバイル判定
-      hideAllPhotos(); //
-      if (isMobile()) {
-        // モバイル用写真を表示
-        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
-        if (mobilePhoto) {
-          mobilePhoto.classList.add('show');
-          document.querySelector('.close-photo').classList.add('show');
-        }
-      } else {
-        // デスクトップ用写真を表示
-        const photo = document.getElementById(`photo-${region}`);
-        if (photo) {
-          photo.classList.add('show');
-        }
-      }
-    }
+  // Detect real hover capability (desktop/laptop with mouse)
+  const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    function hidePhoto(region) {
-      if (isMobile()) {
-        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+  function showPhoto(region) {
+    if (!CAN_HOVER) {
+      // Mobile / touch: show centered photo + close button
+      hideAllPhotos();
+      const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+      if (mobilePhoto) {
+        mobilePhoto.classList.add('show');
         const closeBtn = document.querySelector('.close-photo');
-        if (mobilePhoto) {
-          mobilePhoto.classList.remove('show');
-          if (closeBtn) {
-            closeBtn.classList.remove('show');
-          }
-        }
-      } else {
-        const photo = document.getElementById(`photo-${region}`);
-        if (photo) {
-          photo.classList.remove('show');
-        }
+        if (closeBtn) closeBtn.classList.add('show');
       }
+    } else {
+      // Desktop: show side photo near map
+      const photo = document.getElementById(`photo-${region}`);
+      if (photo) photo.classList.add('show');
     }
-
-    function hideAllPhotos() {
-      document.querySelectorAll('.region-photo').forEach(photo => {
-        photo.classList.remove('show');
-      });
-      const closeBtn = document.querySelector('.close-photo');
-      if (closeBtn) {
-        closeBtn.classList.remove('show');
-      }
-    }
-
-    function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    }
-
-    // モバイル用のタッチイベントを追加
-    document.addEventListener('DOMContentLoaded', function () {
-  if (isMobile()) {
-    document.querySelectorAll('.region-label').forEach(label => {
-      const regionKey = label.dataset.region;
-
-      label.addEventListener('touchstart', function (e) {
-        e.preventDefault();
-        showPhoto(regionKey);
-      });
-
-      label.addEventListener('click', function (e) {
-        e.preventDefault();
-        showPhoto(regionKey);
-      });
-    });
   }
-});
+
+  function hidePhoto(region) {
+    if (!CAN_HOVER) {
+      const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+      if (mobilePhoto) mobilePhoto.classList.remove('show');
+      const closeBtn = document.querySelector('.close-photo');
+      if (closeBtn) closeBtn.classList.remove('show');
+    } else {
+      const photo = document.getElementById(`photo-${region}`);
+      if (photo) photo.classList.remove('show');
+    }
+  }
+
+  function hideAllPhotos() {
+    document.querySelectorAll('.region-photo').forEach(p => p.classList.remove('show'));
+    const closeBtn = document.querySelector('.close-photo');
+    if (closeBtn) closeBtn.classList.remove('show');
+  }
+
+  // Wire up events once DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.region-label').forEach(label => {
+      const region = label.dataset.region;
+
+      if (CAN_HOVER) {
+        // Desktop: hover in/out
+        label.addEventListener('mouseenter', () => showPhoto(region));
+        label.addEventListener('mouseleave', () => hidePhoto(region));
+      } else {
+        // Touch: tap to open (tapping another label switches photo)
+        label.addEventListener('click', (e) => {
+          e.preventDefault();
+          showPhoto(region);
+        });
+      }
+    });
+
+    // Touch: tap outside the map to close
+    if (!CAN_HOVER) {
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.map-container')) hideAllPhotos();
+      });
+    }
+  });
+</script>
