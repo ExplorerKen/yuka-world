@@ -6,6 +6,8 @@
   <title>ユカちゃんと豚ちゃんの日本旅行</title>
   <link rel="stylesheet" href="style.css">
   <style>
+  html { -webkit-text-size-adjust: 100%; }  /* iPhoneの自動拡大を防ぐ */
+
     h1 {
       color: #d15757;
       margin-bottom: 10px;
@@ -220,7 +222,17 @@
         padding: 3px 6px;
       }
       
-      #japan-map { width: 320px; }
+      #japan-map { width: 320px; max-width: 90vw; }
+      .travel-container { padding: 0 12px; }
+
+       /* ラベルの外出し量を小さくして画面内に収める（スマホ用上書き） */
+      .hokkaido { top: 15%; right: -50px; }
+      .tokyo    { top: 55%; right: -48px; }
+      .fujisan  { bottom: 30%; right: -50px; }
+      .kyoto    { top: 50%; left: -50px; }
+      .osaka    { top: 62%; left: -48px; }
+      .fukuoka  { top: 74%; left: -52px; }
+      .okinawa  { bottom: 2%; left: -50px; }
       
       .region-photo {
         position: absolute;
