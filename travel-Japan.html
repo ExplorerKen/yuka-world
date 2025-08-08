@@ -196,6 +196,10 @@
     .right-photos #photo-Tokyo { top: 120px; }
     .right-photos #photo-Fujisan { top: 240px; }
     
+    .close-photo {
+      display: none;
+    }
+    
     @media (max-width: 768px) {
       .travel-container {
         flex-direction: column;
@@ -203,20 +207,63 @@
       }
       
       .left-photos, .right-photos {
-        width: 100%;
-        max-width: 300px;
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
+        display: none;
+      }
+      
+      .map-container {
+        position: relative;
+        display: inline-block;
       }
       
       .region-label {
-        font-size: 12px;
-        padding: 4px 8px;
+        font-size: 11px;
+        padding: 3px 6px;
       }
       
       #japan-map {
-        width: 300px;
+        width: 320px;
+      }
+      
+      .region-photo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        width: 280px;
+        max-width: 280px;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: all 0.4s ease;
+        z-index: 100;
+        border: 3px solid white;
+      }
+      
+      .region-photo.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      
+      .close-photo {
+        display: none;
+        position: absolute;
+        top: 10%;
+        right: 10%;
+        width: 30px;
+        height: 30px;
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        z-index: 101;
+      }
+      
+      .close-photo.show {
+        display: block;
       }
     }
   </style>
@@ -289,6 +336,17 @@
            onmouseleave="hidePhoto('Okinawa')">
         沖縄
       </div>
+      
+      <!-- モバイル用：中央に表示される写真 -->
+      <img id="photo-Kyoto-mobile" class="region-photo" src="shibatravel-Kyoto.png" alt="京都の旅行写真">
+      <img id="photo-Osaka-mobile" class="region-photo" src="shibatravel-Osaka.png" alt="大阪の旅行写真">
+      <img id="photo-Fukuoka-mobile" class="region-photo" src="shibatravel-Fukuoka.png" alt="福岡の旅行写真">
+      <img id="photo-Okinawa-mobile" class="region-photo" src="shibatravel-Okinawa.png" alt="沖縄の旅行写真">
+      <img id="photo-Hokkaido-mobile" class="region-photo" src="shibatravel-Hokkaido.png" alt="北海道の旅行写真">
+      <img id="photo-Tokyo-mobile" class="region-photo" src="shibatravel-Tokyo.png" alt="東京の旅行写真">
+      <img id="photo-Fujisan-mobile" class="region-photo" src="shibatravel-Fujisan.png" alt="富士山の旅行写真">
+      
+      <button class="close-photo" onclick="hideAllPhotos()">×</button>
     </div>
     
     <!-- 右側の写真エリア -->
@@ -301,23 +359,50 @@
 
   <script>
     function showPhoto(region) {
-      const photo = document.getElementById(`photo-${region}`);
-      if (photo) {
-        photo.classList.add('show');
+      // モバイル端末かどうかをチェック
+      if (isMobile()) {
+        // モバイル用の写真を表示
+        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+        const closeBtn = document.querySelector('.close-photo');
+        if (mobilePhoto) {
+          hideAllPhotos(); // 他の写真を隠す
+          mobilePhoto.classList.add('show');
+          closeBtn.classList.add('show');
+        }
+      } else {
+        // デスクトップ用の写真を表示
+        const photo = document.getElementById(`photo-${region}`);
+        if (photo) {
+          photo.classList.add('show');
+        }
       }
     }
     
     function hidePhoto(region) {
-      const photo = document.getElementById(`photo-${region}`);
-      if (photo) {
-        photo.classList.remove('show');
+      if (isMobile()) {
+        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+        const closeBtn = document.querySelector('.close-photo');
+        if (mobilePhoto) {
+          mobilePhoto.classList.remove('show');
+          closeBtn.classList.remove('show');
+        }
+      } else {
+        const photo = document.getElementById(`photo-${region}`);
+        if (photo) {
+          photo.classList.remove('show');
+        }
       }
     }
     
     function hideAllPhotos() {
+      // 全ての写真を隠す（デスクトップとモバイル両方）
       document.querySelectorAll('.region-photo').forEach(photo => {
         photo.classList.remove('show');
       });
+      const closeBtn = document.querySelector('.close-photo');
+      if (closeBtn) {
+        closeBtn.classList.remove('show');
+      }
     }
     
     function getRegionKey(regionText) {
@@ -347,13 +432,12 @@
         // モバイル端末の場合：タッチイベントを使用
         label.addEventListener('touchstart', function(e) {
           e.preventDefault(); // デフォルトの動作を防ぐ
-          hideAllPhotos(); // 他の写真を隠す
           showPhoto(regionKey);
         });
         
         // タッチ以外の場所をタップしたら写真を隠す
         document.addEventListener('touchstart', function(e) {
-          if (!e.target.closest('.region-label')) {
+          if (!e.target.closest('.region-label') && !e.target.closest('.region-photo') && !e.target.closest('.close-photo')) {
             hideAllPhotos();
           }
         });
