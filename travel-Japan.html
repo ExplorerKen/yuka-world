@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <style>
   html { -webkit-text-size-adjust: 100%; }  /* iPhoneの自動拡大を防ぐ */
+  body { overflow-x: hidden; }
 
     h1 {
       color: #d15757;
@@ -218,29 +219,34 @@
       }
       
       .region-label {
-        font-size: 11px;
-        padding: 3px 6px;
+        font-size: 12px;
+        padding: 4px 7px;
       }
       
-      #japan-map { width: 320px; max-width: 90vw; }
-      .travel-container { padding: 0 12px; }
+      #japan-map { width: 300px; max-width: 80vw; }
+      
+      .travel-container { 
+        padding: 0 12px; 
+        gap: 16px; 
+        margin-top: 12px; 
+      } 
 
        /* ラベルの外出し量を小さくして画面内に収める（スマホ用上書き） */
-      .hokkaido { top: 15%; right: -50px; }
-      .tokyo    { top: 55%; right: -48px; }
-      .fujisan  { bottom: 30%; right: -50px; }
-      .kyoto    { top: 50%; left: -50px; }
-      .osaka    { top: 62%; left: -48px; }
-      .fukuoka  { top: 74%; left: -52px; }
-      .okinawa  { bottom: 2%; left: -50px; }
+      .hokkaido { top: 15%; right: -44px; }
+      .tokyo    { top: 55%; right: -42px; }
+      .fujisan  { bottom: 30%; right: -44px; }
+      .kyoto    { top: 50%; left: -44px; }
+      .osaka    { top: 62%; left: -42px; }
+      .fukuoka  { top: 74%; left: -44px; }
+      .okinawa  { bottom: 2%; left: -44px; }
       
       .region-photo {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.8);
-        width: 300px;
-        max-width: 300px;
+        width: min(300px, 80vw);
+        max-width: 80vw;
         height: auto;
         border-radius: 12px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
