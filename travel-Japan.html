@@ -192,14 +192,13 @@
     .left-photos #photo-Okinawa { top: 400px; left: -20px;}
     
     /* 右側写真の位置 */
-    /* 右側写真の位置 */
     .right-photos #photo-Hokkaido { top: 10px; left: 10px; }
     .right-photos #photo-Tokyo { top: 130px; left: 10px; }
     .right-photos #photo-Fujisan { top: 250px; left: 10px; }
-    }
     
+    /* パソコンでは×ボタンを完全に隠す */
     .close-photo {
-      display: none;
+      display: none !important;
     }
     
     @media (max-width: 768px) {
@@ -248,8 +247,9 @@
         transform: translate(-50%, -50%) scale(1);
       }
       
+      /* スマホでのみ×ボタンを表示 */
       .close-photo {
-        display: none;
+        display: none !important;
         position: absolute;
         top: 20px;
         right: 20px;
@@ -268,7 +268,7 @@
       }
       
       .close-photo.show {
-        display: block;
+        display: block !important;
       }
     }
   </style>
@@ -363,61 +363,94 @@
   </div>
 
   <script>
-function showPhoto(region) {
-  const photo = document.getElementById(`photo-${region}`);
-  if (photo) {
-    photo.classList.add('show');
-  }
-}
-
-function hidePhoto(region) {
-  const photo = document.getElementById(`photo-${region}`);
-  if (photo) {
-    photo.classList.remove('show');
-  }
-}
-
-function hideAllPhotos() {
-  document.querySelectorAll('.region-photo').forEach(photo => {
-    photo.classList.remove('show');
-  });
-}
-
-// モバイル端末かどうかを判定
-function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-// 各ラベルにイベントリスナーを追加
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.region-label').forEach(label => {
-    const region = label.textContent.trim();
-    let regionKey = region;
-    
-    // 地域名をマッピング
-    if (region === '北海道') regionKey = 'Hokkaido';
-    else if (region === '東京') regionKey = 'Tokyo';
-    else if (region === '京都') regionKey = 'Kyoto';
-    else if (region === '大阪') regionKey = 'Osaka';
-    else if (region === '福岡') regionKey = 'Fukuoka';
-    else if (region === '富士山') regionKey = 'Fujisan';
-    else if (region === '沖縄') regionKey = 'Okinawa';
-    
-    // デスクトップでは既存のonmouseenter/onmouseleaveを使用
-    // モバイルではタッチイベントを追加
-    if (isMobile()) {
-      label.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        showPhoto(regionKey);
-      });
-      
-      label.addEventListener('click', function(e) {
-        e.preventDefault();
-        showPhoto(regionKey);
-      });
+    function showPhoto(region) {
+      // モバイル判定
+      if (isMobile()) {
+        // モバイル用写真を表示
+        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+        const closeBtn = document.querySelector('.close-photo');
+        if (mobilePhoto) {
+          hideAllPhotos();
+          mobilePhoto.classList.add('show');
+          if (closeBtn) {
+            closeBtn.classList.add('show');
+          }
+        }
+      } else {
+        // デスクトップ用写真を表示
+        const photo = document.getElementById(`photo-${region}`);
+        if (photo) {
+          photo.classList.add('show');
+        }
+      }
     }
-  });
-});
-</script>
+
+    function hidePhoto(region) {
+      if (isMobile()) {
+        const mobilePhoto = document.getElementById(`photo-${region}-mobile`);
+        const closeBtn = document.querySelector('.close-photo');
+        if (mobilePhoto) {
+          mobilePhoto.classList.remove('show');
+          if (closeBtn) {
+            closeBtn.classList.remove('show');
+          }
+        }
+      } else {
+        const photo = document.getElementById(`photo-${region}`);
+        if (photo) {
+          photo.classList.remove('show');
+        }
+      }
+    }
+
+    function hideAllPhotos() {
+      document.querySelectorAll('.region-photo').forEach(photo => {
+        photo.classList.remove('show');
+      });
+      const closeBtn = document.querySelector('.close-photo');
+      if (closeBtn) {
+        closeBtn.classList.remove('show');
+      }
+    }
+
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    // モバイル用のタッチイベントを追加
+    document.addEventListener('DOMContentLoaded', function() {
+      if (isMobile()) {
+        document.querySelectorAll('.region-label').forEach(label => {
+          const region = label.textContent.trim();
+          let regionKey = region;
+          
+          if (region === '北海道') regionKey = 'Hokkaido';
+          else if (region === '東京') regionKey = 'Tokyo';
+          else if (region === '京都') regionKey = 'Kyoto';
+          else if (region === '大阪') regionKey = 'Osaka';
+          else if (region === '福岡') regionKey = 'Fukuoka';
+          else if (region === '富士山') regionKey = 'Fujisan';
+          else if (region === '沖縄') regionKey = 'Okinawa';
+          
+          label.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            showPhoto(regionKey);
+          });
+          
+          label.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPhoto(regionKey);
+          });
+        });
+
+        // 地図外をタップした時に写真を隠す
+        document.addEventListener('touchstart', function(e) {
+          if (!e.target.closest('.map-container')) {
+            hideAllPhotos();
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
