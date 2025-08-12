@@ -360,7 +360,7 @@
     <div class="info-section">
       <div class="province-info" id="provinceInfo">
         <div class="welcome-text">
-          <h2>🗺️ 中国地图</h2>
+          <h2>🗺️ 中国旅行写真</h2>
           <p>中国の地域をクリックしてみてね～</p>
           <div style="margin-top: 30px; font-size: 0.9em; opacity: 0.7;">
           </div>
@@ -370,20 +370,36 @@
   </div>
 
   <script>
-const PATH_URL = 'province_paths_800x600.json';
-(async function init() {
-  const resp = await fetch(PATH_URL);
-  const pathMap = await resp.json();
-  document.querySelectorAll('svg.china-map .province').forEach(el => {
-    const name = el.dataset.name;
-    const d = pathMap[name];
-    if (d) {
-      el.setAttribute('d', d);
-    } else {
-      el.style.display = 'none';
-    }
-  });
-})();
+const PATH_URL = './province_paths_800x600.json';
+
+window.addEventListener('DOMContentLoaded', init);
+
+async function init() {
+  console.log("init関数が呼び出された");
+  try {
+    const resp = await fetch(PATH_URL, { cache: 'no-store' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+
+    const pathMap = await resp.json();
+
+    document.querySelectorAll('svg.china-map .province').forEach(el => {
+      const name = el.dataset.name;
+      const d = pathMap[name];
+      if (d) {
+        el.setAttribute('d', d);
+      } else {
+        el.style.display = 'none';
+      }
+    });
+
+    console.log('JSON 読み込み成功:', Object.keys(pathMap).slice(0, 5));
+
+  } catch (err) {
+    console.error('JSON読み込みエラー:', err);
+    alert('地図データの読み込みに失敗しました。');
+  }
+}
+
     // ← init() のすぐ下に追加
   // ← init() のすぐ下に追加
     const provinces    = document.querySelectorAll('.province');
