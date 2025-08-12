@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>中国旅行マップ（省境界つき）</title>
+<style>
+  :root {
+    --bg1:#5c5ad7; --bg2:#a58be0;
+    --card:#f5e9cf; --ink:#222;
+    --stroke:#ffffffa8; --hover:#ffd54f; --fill:#b9d08a;
+  }
+  body{margin:0;font-family:system-ui,Segoe UI,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:radial-gradient(1200px 600px at 50% -10%,var(--bg2),var(--bg1));color:var(--ink)}
+  header{position:sticky;top:0;background:color-mix(in oklab,var(--card) 86%,white 14%);padding:14px 22px;box-shadow:0 6px 22px #0002}
+  main{max-width:1150px;margin:28px auto;padding:12px}
+  .stage{display:grid;grid-template-columns: 1.2fr .9fr; gap:24px}
+  .panel{background:#ffffff22;border-radius:18px;padding:18px 18px 22px;backdrop-filter: blur(10px);box-shadow:0 20px 40px #0003}
+  h1{margin:6px 0 12px;font-size:28px;letter-spacing:.06em;color:#fff;text-shadow:0 3px 10px #0006}
+  #mapWrap{position:relative;min-height:560px}
+  svg{width:100%;height:560px;display:block;border-radius:14px}
+  .province{fill:var(--fill);stroke:var(--stroke);stroke-width:.8px;cursor:pointer;transition:filter .2s, transform .05s}
+  .province:hover{filter:brightness(1.05)}
+  .province.focus{filter: drop-shadow(0 0 10px #0006);stroke-width:1.8px;stroke:var(--hover)}
+  .tooltip{position:absolute;pointer-events:none;background:#fff;border-radius:10px;padding:8px 10px;font-size:13px;
+           box-shadow:0 8px 22px #0003;transform:translate(-50%,-120%);white-space:nowrap}
+  .detail h2{margin:.2rem 0 .6rem;font-size:26px;text-align:center;color:#d58a00;text-shadow:0 2px 8px #0002}
+  .card{background:#ffffffb8;border-radius:16px;padding:12px;box-shadow:inset 0 1px 0 #fff8, 0 10px 24px #0002}
+  .hero{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:4px solid #e8d2a7;box-shadow:0 8px 16px #0002}
+  .mute{opacity:.7}
+  @media (max-width:980px){.stage{grid-template-columns:1fr}.panel{padding:14px}svg{height:520px}}
+</style>
+</head>
+<body>
+<header><strong>🏞 中国旅行マップ</strong></header>
+
+<main class="stage">
+  <section class="panel" id="mapWrap">
+    <h1>中国地図（省・自治区・直轄市）</h1>
+    <svg id="chinaMap" role="img" aria-label="China provinces map"></svg>
+    <div id="tip" class="tooltip" style="display:none"></div>
+  </section>
+
+  <aside class="panel detail">
+    <h2 id="title" class="mute">地域を選択してください</h2>
+    <div class="card">
+      <img id="photo" class="hero" src="" alt="" />
+      <p id="desc" style="margin:.8rem 0 0;line-height:1.7" class="mute">
+        左の地図で地域をクリックすると、ここに写真と説明が表示されます。
+      </p>
+    </div>
+  </aside>
+</main>
+
+<!-- D3.js -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+(async function(){
+  // 1) 省ごとの画像と説明（必要に応じて差し替えてください）
+  const info = {
+    "西藏|チベット|Tibet": {
+      img: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1280&auto=format&fit=crop",
+      desc: "世界の屋根・雪域高原の神秘的な土地。ラサのポタラ宮、ナムツォ湖、エベレスト北側BCなどが人気。"
+    },
+    "新疆|Xinjiang": {
+      img: "https://images.unsplash.com/photo-1535747790212-30c585ab4862?q=80&w=1280&auto=format&fit=crop",
+      desc: "シルクロードの交差点。トルファン、喀什、天山の雄大な自然と多彩な食文化。"
+    },
+    "北京|Beijing": {
+      img: "https://images.unsplash.com/photo-1557579112-2d0f6d5f5d02?q=80&w=1280&auto=format&fit=crop",
+      desc: "首都・紫禁城、天壇、万里の長城。歴史とモダンが融合。"
+    },
+    "上海|Shanghai": {
+      img: "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?q=80&w=1280&auto=format&fit=crop",
+      desc: "外灘と浦東の夜景、歴史建築と先端都市のコントラスト。"
+    }
+    // …必要に応じて他地域も追加
+  };
+
+  // 2) 地図のベース設定
+  const svg = d3.select("#chinaMap");
+  const width = svg.node().clientWidth;
+  const height = svg.node().clientHeight;
+
+  // メルカトルより中国は Albers 系が歪みが少ない
+  const projection = d3.geoMercator() // 手軽さ優先。必要なら d3.geoConicEqualArea() に変更可
+      .center([104, 35.5]) // 中国の重心付近
+      .scale(700)          // 見た目に合わせて微調整
+      .translate([width/2, height/2+10]);
+
+  const path = d3.geoPath().projection(projection);
+
+  // 3) GeoJSON 読み込み（同じフォルダに china-provinces.geojson を置く）
+  const geo = await fetch("./china-provinces.geojson").then(r => r.json());
+
+  // 4) 描画
+  const g = svg.append("g");
+
+  // 海外離島など小さな穴の見栄えを良くするためにソート
+  const features = geo.features.slice().sort((a,b)=> d3.geoArea(b)-d3.geoArea(a));
+
+  g.selectAll("path.province")
+    .data(features)
+    .join("path")
+      .attr("class","province")
+      .attr("d", path)
+      .on("pointerenter", function (event, d) {
+        const name = getName(d);
+        d3.select(this).classed("focus", true);
+        showTip(event, name);
+      })
+      .on("pointermove", function (event, d) {
+        showTip(event, getName(d));
+      })
+      .on("pointerleave", function () {
+        d3.select(this).classed("focus", false);
+        hideTip();
+      })
+      .on("click", (event, d) => {
+        const name = getName(d);
+        focusProvince(name, event.currentTarget);
+      });
+
+  // 5) 描画後に台湾の色を少しだけ変える（ご希望があったため）
+  g.selectAll("path.province").each(function(d){
+    const n = getName(d);
+    if (/台湾|Taiwan/i.test(n)) d3.select(this).attr("fill", "#b7cf96");
+  });
+
+  // 6) 右パネル更新
+  function focusProvince(name, node){
+    g.selectAll(".province").classed("focus", false);
+    d3.select(node).classed("focus", true);
+
+    const key = findInfoKey(name);
+    const data = key ? info[key] : null;
+
+    document.getElementById("title").textContent = name;
+    const photo = document.getElementById("photo");
+    const desc  = document.getElementById("desc");
+    if (data){
+      photo.src = data.img;
+      photo.alt = name;
+      desc.textContent = data.desc;
+      document.getElementById("title").classList.remove("mute");
+      desc.classList.remove("mute");
+    } else {
+      photo.src = "";
+      photo.alt = "";
+      desc.textContent = "この地域の説明は未設定です。info マップに画像URLと説明文を追加してください。";
+      document.getElementById("title").classList.remove("mute");
+      desc.classList.add("mute");
+    }
+  }
+
+  // 7) 省名の取り出し（GeoJSON のプロパティ差異を吸収）
+  function getName(f){
+    const p = f.properties || {};
+    return p.name || p.NAME || p.NAME_1 || p.Name || p.fullname || p.admin || "不明";
+  }
+
+  // 8) ツールチップ
+  const tip = document.getElementById("tip");
+  function showTip(ev, text){
+    tip.style.display="block";
+    tip.textContent = text;
+    const r = svg.node().getBoundingClientRect();
+    tip.style.left = (ev.clientX - r.left) + "px";
+    tip.style.top  = (ev.clientY - r.top) + "px";
+  }
+  function hideTip(){ tip.style.display="none"; }
+
+  // 9) info 検索（日本語・中国語・英語の表記ゆれ対応）
+  function findInfoKey(name){
+    name = String(name);
+    return Object.keys(info).find(k => k.split("|").some(x => name.includes(x)));
+  }
+
+  // 10) リサイズ対応（簡易）
+  addEventListener("resize", () => {
+    const w = svg.node().clientWidth, h = svg.node().clientHeight;
+    projection.translate([w/2, h/2+10]).scale(700 * (w/1000));
+    g.selectAll("path").attr("d", path);
+  });
+})();
+</script>
+
+</body>
+</html>
