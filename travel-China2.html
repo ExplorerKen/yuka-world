@@ -41,113 +41,98 @@
   </aside>
 </div>
 
+<!-- ▼あなたの SVG と各 <path class="province" data-name="…"> はそのまま残す -->
+
+<!-- D3 読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
-(async function () {
-  // 1) GeoJSON を読み込み（同フォルダに置いたファイル名）
-  const urls = ['china-provinces.geojson.json', 'Taiwan.geojson.json'];
+(async () => {
+  // 1) GeoJSON を読み込み（Natural Earth/OSM 由来の省級）
+  const geo = await fetch('china-provinces.geojson.json').then(r => r.json());
 
-  // ファイル読み込み（CORSで落ちる時はローカルサーバーで開いてください）
-  const [china, taiwan] = await Promise.all(
-    urls.map(u => fetch(u).then(r => {
-      if(!r.ok) throw new Error('GeoJSONを読み込めません: ' + u);
-      return r.json();
-    }))
-  );
-
-  // 2) 特徴量をマージして 1 つの地図に
-  const combined = {
-    type: 'FeatureCollection',
-    features: [...(china.features || []), ...(taiwan.features || [])]
+  // 2) “新疆→黒龍江（台湾除外）” の対応表（data-name → ISOコード）
+  const name2iso = {
+    '新疆':'CN-XJ','西藏':'CN-XZ','青海':'CN-QH','内蒙古':'CN-NM','甘粛':'CN-GS','寧夏':'CN-NX',
+    '陝西':'CN-SN','四川':'CN-SC','重慶':'CN-CQ','雲南':'CN-YN','貴州':'CN-GZ','広西':'CN-GX',
+    '広東':'CN-GD','海南':'CN-HI','湖南':'CN-HN','湖北':'CN-HB','江西':'CN-JX','河南':'CN-HA',
+    '山西':'CN-SX','河北':'CN-HE','北京':'CN-BJ','天津':'CN-TJ','山東':'CN-SD','江蘇':'CN-JS',
+    '上海':'CN-SH','浙江':'CN-ZJ','安徽':'CN-AH','福建':'CN-FJ','遼寧':'CN-LN','吉林':'CN-JL',
+    '黒龍江':'CN-HL'
   };
 
-  // 3) ラベルに使う名称を整備（日本語→繁体→簡体→英語の順で優先）
-  const pickName = (p) =>
-    p.name_ja || p.name_zht || p.name_zh || p.name || p.NAME || p.name_en || '名称不明';
+  // 3) 省フィーチャの取り出し（iso_3166_2 / code_hasc / name に広く対応）
+  const feats = geo.features.filter(f => {
+    const p = f.properties || {};
+    const isChina = (p.adm0_a3 === 'CHN') || (p.iso_a2 === 'CN') || /China/i.test(p.admin || '');
+    const notTaiwan = !/Taiwan|CN-71|TW/.test(String(p.name || p.name_en || p.iso_3166_2 || ''));
+    return isChina && notTaiwan;
+  });
 
-  for (const f of combined.features) {
-    const p = f.properties || (f.properties = {});
-    p.display_name = pickName(p);
-    // EChartsのラベルは feature.properties.name を見るので上書き
-    p.name = p.display_name;
+  const byISO = new Map();
+  for (const f of feats) {
+    const p = f.properties || {};
+    const iso = p.iso_3166_2 || (p.code_hasc ? p.code_hasc.replace('CN.', 'CN-') : '');
+    if (iso) byISO.set(iso, f);
   }
 
-  // 4) 地図を登録
-  echarts.registerMap('china-full', combined, {});
-
-  // 5) 描画
-  const chart = echarts.init(document.getElementById('map'), null, {renderer:'canvas'});
-  const option = {
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'item',
-      formatter: (p) => {
-        const pr = p?.data?.properties || p?.data || {};
-        const t = pr.type_en || pr.type || '';
-        const iso = pr['iso_3166_2'] || pr.adm1_code || pr.code_hasc || '';
-        return `<div style="font-weight:700">${pr.display_name || p.name}</div>
-                <div style="font-size:12px;color:#6b7280">${t} ${iso ? '・ '+iso : ''}</div>`;
-      }
-    },
-    geo: {
-      map: 'china-full',
-      roam: true,
-      zoom: 1.05,
-      nameProperty: 'name', // 上で整備した名前を使う
-      // 見やすい配色
-      itemStyle: {
-        areaColor: '#f472b6',
-        borderColor: '#ffffff',
-        borderWidth: 1.1
-      },
-      emphasis: {
-        itemStyle: { areaColor: '#f59e0b' },
-        label: { show: true, fontWeight: 'bold', color: '#111' }
-      },
-      select: {
-        itemStyle: { areaColor: '#fcd34d' },
-        label: { show: true, color: '#111', fontWeight: 'bold' }
-      },
-      label: {
-        show: true,
-        fontSize: 11,
-        color: '#111',
-        formatter: (p) => (p?.data?.properties?.display_name || p.name)
-      }
-    },
-    series: [{
-      type: 'map',
-      map: 'china-full',
-      nameProperty: 'name',
-      selectedMode: 'single',
-      // 値は不要だが、クリックでプロパティにアクセスできるよう渡す
-      data: combined.features.map(f => ({ name: f.properties.name, value: 0, properties: f.properties }))
-    }]
+  // 名前一致のフォールバック（NEの英語名に対応）
+  const byName = new Map();
+  for (const f of feats) {
+    const p = f.properties || {};
+    const nm = (p.name_zh || p.name || p.name_en || '').toLowerCase();
+    if (nm) byName.set(nm, f);
+  }
+  const isoFallback = {
+    'CN-XJ': /xinjiang/i,
+    'CN-XZ': /(xizang|tibet)/i,
+    'CN-NM': /(nei mongol|inner mongolia)/i,
+    'CN-GS': /gansu/i, 'CN-NX': /ningxia/i, 'CN-QH': /qinghai/i, 'CN-SN': /shaanxi/i,
+    'CN-SC': /sichuan/i, 'CN-CQ': /chongqing/i, 'CN-YN': /yunnan/i, 'CN-GZ': /guizhou/i,
+    'CN-GX': /guangxi/i, 'CN-GD': /guangdong/i, 'CN-HI': /hainan/i, 'CN-HN': /hunan/i,
+    'CN-HB': /hubei/i, 'CN-JX': /jiangxi/i, 'CN-HA': /henan/i, 'CN-SX': /shanxi(?!a)/i,
+    'CN-HE': /hebei/i, 'CN-BJ': /beijing/i, 'CN-TJ': /tianjin/i, 'CN-SD': /shandong/i,
+    'CN-JS': /jiangsu/i, 'CN-SH': /shanghai/i, 'CN-ZJ': /zhejiang/i, 'CN-AH': /anhui/i,
+    'CN-FJ': /fujian/i, 'CN-LN': /liaoning/i, 'CN-JL': /jilin/i, 'CN-HL': /heilongjiang/i
   };
-  chart.setOption(option);
 
-  // 6) クリックで右側パネル更新
-  chart.on('click', function (p) {
-    const pr = p?.data?.properties || {};
-    const el = document.getElementById('info');
-    el.innerHTML = `
-      <div style="font-size:18px;font-weight:800">${pr.display_name || p.name}</div>
-      <div class="meta" style="margin-top:6px">
-        種別：${pr.type_ja || pr.type_en || pr.type || '不明'}　
-        コード：${pr['iso_3166_2'] || pr.adm1_code || pr.code_hasc || '—'}
-      </div>
-      <div class="muted" style="margin-top:8px">
-        中心座標（概算）：${(pr.longitude ?? '').toString().slice(0,8)}, ${(pr.latitude ?? '').toString().slice(0,8)}
-      </div>
-    `;
+  function getFeatureForDataName(cnName) {
+    const iso = name2iso[cnName];
+    if (!iso) return null;
+    if (byISO.has(iso)) return byISO.get(iso);
+    // code_hasc などに無い場合は名称で検索
+    const re = isoFallback[iso];
+    if (re) return feats.find(f => re.test(String(f.properties?.name || f.properties?.name_en || '')));
+    return null;
+  }
+
+  // 4) プロジェクション設定（あなたの viewBox にフィット）
+  const svg = document.querySelector('svg.china-map');
+  const vb = (svg.getAttribute('viewBox') || '0 0 800 600').split(/\s+/).map(Number);
+  const size = [vb[2], vb[3]];
+
+  // 使用する省だけをまとめて全国フィット
+  const selected = {
+    type: 'FeatureCollection',
+    features: Array.from(document.querySelectorAll('.province'))
+      .map(el => getFeatureForDataName(el.dataset.name))
+      .filter(Boolean)
+  };
+
+  const projection = d3.geoMercator();
+  const path = d3.geoPath(projection);
+  projection.fitSize(size, selected);
+
+  // 5) 各 <path> の d を “正しい地形” に置き換え（台湾はそもそも対象外）
+  document.querySelectorAll('.province').forEach(el => {
+    const f = getFeatureForDataName(el.dataset.name);
+    if (!f) { console.warn('見つからない:', el.dataset.name); return; }
+    el.setAttribute('d', path(f));
+    // 推奨の見た目（任意）：線は縮尺非依存
+    el.setAttribute('vector-effect','non-scaling-stroke');
+    if (!el.getAttribute('stroke')) el.setAttribute('stroke','#fff');
+    if (!el.getAttribute('stroke-width')) el.setAttribute('stroke-width','1.2');
+    if (!el.getAttribute('fill')) el.setAttribute('fill','#ff6b9a');
   });
-
-  // リセットボタン
-  document.getElementById('btnReset').addEventListener('click', () => {
-    chart.dispatchAction({type:'restore'});
-  });
-
-  // リサイズ
-  window.addEventListener('resize', () => chart.resize());
 })();
 </script>
 </body>
